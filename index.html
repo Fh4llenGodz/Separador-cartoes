@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Separador Universal</title>
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: #161a22;
+            --input-bg: #0a0c10;
+            --primary: #5b5bf6;
+            --primary-hover: #4a4ae0;
+            --success: #4caf50;
+            --success-hover: #43a047;
+            --text-main: #ffffff;
+            --text-muted: #8b92a5;
+            --border-color: #2a2e38;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .card-header svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+        }
+
+        /* Textareas */
+        textarea {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 12px;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        #inputText {
+            height: 120px;
+        }
+
+        /* Caixa de saída */
+        #outputText {
+            height: 150px;
+            background-color: #0a0c10;
+            border-color: #3a3f4a;
+            color: #a6e3a1; /* Verde claro para os cartões */
+        }
+
+        /* Botões */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #1f232d;
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: #2a2e38;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Resultados Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .result-box span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .result-box span:last-child {
+            font-weight: bold;
+        }
+
+        .val-green { color: var(--success); }
+        .val-red { color: #f44336; }
+        .val-blue { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Área de Entrada -->
+    <div class="card">
+        <div class="card-header">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+            COLE A LISTA
+        </div>
+        <!-- Adicionado oninput para processar automaticamente -->
+        <textarea id="inputText" placeholder="Cole aqui os textos bagunçados com os dados do cartão..." oninput="separar()"></textarea>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="separar()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
+                SEPARAR
+            </button>
+            <button class="btn-secondary" onclick="limpar()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                LIMPAR
+            </button>
+        </div>
+    </div>
+
+    <!-- Área de Resultados (Agora SEM o style="display: none;") -->
+    <div class="card" id="resultCard">
+        <div class="card-header">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v5h2v-5h2v-2h-2v-5h-2v5z"/></svg>
+            RESULTADO
+        </div>
+
+        <div class="results-grid">
+            <div class="result-box">
+                <span>📄 Linhas</span>
+                <span id="countLines" class="val-blue">0</span>
+            </div>
+            <div class="result-box">
+                <span>✅ Válidos</span>
+                <span id="countValid" class="val-green">0</span>
+            </div>
+            <div class="result-box">
+                <span>📄 Únicos</span>
+                <span id="countUnique" class="val-blue">0</span>
+            </div>
+            <div class="result-box">
+                <span>⚠️ Inválidos</span>
+                <span id="countInvalid" class="val-red">0</span>
+            </div>
+        </div>
+
+        <textarea id="outputText" readonly placeholder="Os cartões separados aparecerão aqui automaticamente..."></textarea>
+
+        <div class="btn-group">
+            <button class="btn-success" onclick="copiar()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                COPIAR
+            </button>
+            <button class="btn-secondary" onclick="baixarTxt()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                BAIXAR .TXT
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função principal de separação
+    function separar() {
+        const input = document.getElementById('inputText').value;
+        const outputTextarea = document.getElementById('outputText');
+        
+        // Se a caixa de entrada estiver vazia, limpa a saída e zera os contadores
+        if (!input.trim()) {
+            outputTextarea.value = '';
+            document.getElementById('countLines').innerText = '0';
+            document.getElementById('countValid').innerText = '0';
+            document.getElementById('countUnique').innerText = '0';
+            document.getElementById('countInvalid').innerText = '0';
+            return;
+        }
+
+        const lines = input.split('\n').filter(line => line.trim() !== '');
+        let validCards = [];
+        let invalidCount = 0;
+
+        lines.forEach(line => {
+            // Regex para encontrar o padrão: 16 dígitos | 2 dígitos | 4 dígitos | 3 ou 4 dígitos
+            const match = line.match(/(\d{16})[^\d]*(\d{2})[^\d]*(\d{4})[^\d]*(\d{3,4})/);
+            
+            if (match) {
+                const card = `${match[1]}|${match[2]}|${match[3]}|${match[4]}`;
+                validCards.push(card);
+            } else {
+                invalidCount++;
+            }
+        });
+
+        // Remove duplicatas
+        const uniqueCards = [...new Set(validCards)];
+
+        // Atualiza a interface
+        document.getElementById('countLines').innerText = lines.length;
+        document.getElementById('countValid').innerText = validCards.length;
+        document.getElementById('countUnique').innerText = uniqueCards.length;
+        document.getElementById('countInvalid').innerText = invalidCount;
+
+        // Renderiza o resultado DENTRO DO TEXTAREA
+        if (uniqueCards.length > 0) {
+            outputTextarea.value = uniqueCards.join('\n');
+        } else {
+            outputTextarea.value = "Nenhum cartão válido encontrado.";
+        }
+    }
+
+    // Função para limpar tudo
+    function limpar() {
+        document.getElementById('inputText').value = '';
+        document.getElementById('outputText').value = '';
+        
+        // Reseta contadores
+        document.getElementById('countLines').innerText = '0';
+        document.getElementById('countValid').innerText = '0';
+        document.getElementById('countUnique').innerText = '0';
+        document.getElementById('countInvalid').innerText = '0';
+    }
+
+    // Função para copiar o resultado da caixa de saída
+    function copiar() {
+        const outputTextarea = document.getElementById('outputText');
+        const textToCopy = outputTextarea.value;
+        
+        if (!textToCopy || textToCopy === "Nenhum cartão válido encontrado.") {
+            alert("Não há nada para copiar.");
+            return;
+        }
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ COPIADO!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }).catch(err => {
+            alert("Erro ao copiar: " + err);
+        });
+    }
+
+    // Função para baixar TXT
+    function baixarTxt() {
+        const outputTextarea = document.getElementById('outputText');
+        const textToDownload = outputTextarea.value;
+
+        if (!textToDownload || textToDownload === "Nenhum cartão válido encontrado.") {
+            alert("Não há nada para baixar.");
+            return;
+        }
+
+        const blob = new Blob([textToDownload], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cartoes_separados.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
