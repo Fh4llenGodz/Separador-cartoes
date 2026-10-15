@@ -340,14 +340,14 @@
         .val-blue { color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.4); }
         .val-orange { color: var(--warning); text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
 
-        /* ==== TOAST SEM NEON ==== */
+        /* ==== TOAST ==== */
         .toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.12); /* Borda cinza sutil */
+            border: 1px solid rgba(255, 255, 255, 0.12);
             padding: 12px 24px;
             border-radius: 50px;
             display: flex;
@@ -356,7 +356,7 @@
             font-size: 14px;
             font-weight: 500;
             color: var(--text-main);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* Sombra neutra */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             opacity: 0;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 999;
@@ -373,7 +373,6 @@
             fill: var(--success);
         }
 
-        /* Ícone de X vermelho */
         .toast.error svg {
             fill: var(--danger);
         }
@@ -479,10 +478,20 @@
     const ICON_CHECK = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>';
     const ICON_X = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
 
+    // Variável para armazenar o timeout atual do toast
+    let toastTimeout = null;
+
+    // ==== FUNÇÃO TOAST QUE REINICIA O TEMPO A CADA CHAMADA ====
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
         const toastIcon = document.getElementById('toastIcon');
+        
+        // Cancela o timeout anterior (reinicia o tempo)
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+            toastTimeout = null;
+        }
         
         // Atualiza o ícone e a cor
         if (isError) {
@@ -493,16 +502,30 @@
             toast.classList.remove('error');
         }
         
-        // Se já estiver mostrando, apenas atualiza o texto
+        // Atualiza o texto
+        toastMessage.innerText = message;
+        
+        // Se já estiver visível, força uma pequena "reinicialização" da animação
         if (toast.classList.contains('show')) {
-            toastMessage.innerText = message;
-            return;
+            toast.style.transition = 'none';
+            toast.classList.remove('show');
+            
+            // Force reflow para reiniciar a animação
+            void toast.offsetWidth;
+            
+            // Restaura a transição e mostra de novo
+            toast.style.transition = '';
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+        } else {
+            toast.classList.add('show');
         }
         
-        toastMessage.innerText = message;
-        toast.classList.add('show');
-        setTimeout(() => {
+        // Define um novo timeout para esconder
+        toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
+            toastTimeout = null;
         }, 2000);
     }
 
@@ -619,6 +642,20 @@
     }
 
     function limpar() {
+        const input = document.getElementById('inputText').value;
+        const output = document.getElementById('outputText').value;
+        const repeated = document.getElementById('repeatedText').value;
+        
+        const temAlgoParaLimpar = 
+            input.trim() !== '' ||
+            (output && output !== "Nenhum cartão válido encontrado.") ||
+            (repeated && repeated !== "Nenhum cartão repetido.");
+        
+        if (!temAlgoParaLimpar) {
+            showToast("Não há nada para limpar.", true);
+            return;
+        }
+        
         document.getElementById('inputText').value = '';
         document.getElementById('outputText').value = '';
         document.getElementById('repeatedText').value = '';
