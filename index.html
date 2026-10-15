@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fh4llen Godz - Separador de Cartões</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        :root {
+            /* ==== HIERARQUIA DE CORES BEM DEFINIDA ==== */
+            /* 1. Fundo do app - preto profundo */
+            --bg-color: #0a0a0f;
+            --bg-gradient-1: rgba(139, 92, 246, 0.12);
+            --bg-gradient-2: rgba(16, 185, 129, 0.06);
+            
+            /* 2. Cards - cinza médio bem visível */
+            --card-bg: #2f3546;
+            --card-border: rgba(255, 255, 255, 0.18);
+            
+            /* 3. Caixas internas - pretas, bem destacadas */
+            --input-bg: #0f1219;
+            --input-border: rgba(255, 255, 255, 0.15);
+            
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --primary-light: #c4b5fd;
+            --success: #10b981;
+            --success-hover: #059669;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #a1a9b8;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--bg-gradient-1), transparent 30%),
+                radial-gradient(circle at 90% 80%, var(--bg-gradient-2), transparent 30%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 0;
+            padding-top: 70px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .app-header h1 {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-header h1 .purple-name {
+            background: linear-gradient(135deg, var(--primary-light), #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .app-header h1 .separator-text {
+            color: var(--text-muted);
+            font-family: var(--font-main);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        /* ==== CARDS - Cinza médio ==== */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .card-header-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+
+        /* ==== CAIXAS DE TEXTO - Preto profundo ==== */
+        textarea {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            padding: 14px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            letter-spacing: -0.3px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 
+                inset 0 10px 20px rgba(0, 0, 0, 0.9),
+                inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+                0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        textarea:focus {
+            border-color: rgba(139, 92, 246, 0.8);
+            box-shadow: 
+                inset 0 10px 20px rgba(0, 0, 0, 0.9),
+                inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+                0 0 0 2px rgba(139, 92, 246, 0.5),
+                0 0 25px rgba(139, 92, 246, 0.25);
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        #inputText {
+            height: 220px;
+        }
+
+        #outputText {
+            height: 150px;
+            margin-bottom: 12px;
+        }
+
+        #repeatedText {
+            height: 100px;
+            margin-bottom: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            font-family: var(--font-main);
+            letter-spacing: 0.5px;
+            transition: all 0.1s ease;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            box-shadow: 
+                0 4px 15px rgba(139, 92, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 
+                0 6px 20px rgba(139, 92, 246, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #3a3f4d, #2a2e3d);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), var(--success-hover));
+            color: white;
+            box-shadow: 
+                0 4px 15px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* ==== CAIXAS DE CONTAGEM - Preto profundo ==== */
+        .result-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            box-shadow: 
+                inset 0 5px 10px rgba(0,0,0,0.8),
+                inset 0 -1px 0 rgba(255,255,255,0.04);
+        }
+
+        .result-box .label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: center;
+        }
+
+        .result-box .label svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .result-box .label .icon-lines { fill: #60a5fa; }
+        .result-box .label .icon-valid { fill: var(--success); }
+        .result-box .label .icon-invalid { fill: var(--danger); }
+        .result-box .label .icon-repeated { fill: var(--warning); }
+
+        .result-box span:last-child {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .val-green { color: var(--success); text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .val-red { color: var(--danger); text-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .val-blue { color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.4); }
+        .val-orange { color: var(--warning); text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            padding: 12px 24px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--success);
+        }
+    </style>
+</head>
+<body>
+
+<header class="app-header">
+    <h1>
+        <span class="purple-name">Fh4llen Godz</span> 
+        <span class="separator-text"> - Separador de Cartões</span>
+    </h1>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-header-title">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+                COLE A LISTA
+            </div>
+        </div>
+        <textarea id="inputText" placeholder="Cole aqui os textos com os dados do cartão..."></textarea>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="separar()">
+                <svg class="btn-icon" viewBox="0 0 24 24">
+                    <path d="M12 2 L8 6 H10 V9 H14 V6 H16 Z"/>
+                    <rect x="5" y="11" width="14" height="2" rx="1"/>
+                    <path d="M12 22 L8 18 H10 V15 H14 V18 H16 Z"/>
+                </svg>
+                SEPARAR
+            </button>
+            <button class="btn-secondary" onclick="limpar()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                LIMPAR
+            </button>
+        </div>
+    </div>
+
+    <div class="card" id="resultCard">
+        <div class="card-header">
+            <div class="card-header-title">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v5h2v-5h2v-2h-2v-5h-2v5z"/></svg>
+                RESULTADO
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <div class="result-box">
+                <span class="label">
+                    <svg class="icon-lines" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+                    Linhas
+                </span>
+                <span id="countLines" class="val-blue">0</span>
+            </div>
+            <div class="result-box">
+                <span class="label">
+                    <svg class="icon-valid" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Válidos
+                </span>
+                <span id="countValid" class="val-green">0</span>
+            </div>
+            <div class="result-box">
+                <span class="label">
+                    <svg class="icon-invalid" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                    Inválidos
+                </span>
+                <span id="countInvalid" class="val-red">0</span>
+            </div>
+            <div class="result-box" style="grid-column: span 3;">
+                <span class="label">
+                    <svg class="icon-repeated" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+                    Cartões Repetidos
+                </span>
+                <span id="countRepeated" class="val-orange">0</span>
+            </div>
+        </div>
+
+        <textarea id="outputText" readonly placeholder="Os cartões separados aparecerão aqui após clicar em SEPARAR..."></textarea>
+        
+        <textarea id="repeatedText" readonly placeholder="Os cartões repetidos aparecerão aqui..."></textarea>
+
+        <div class="btn-group" style="flex-wrap: wrap;">
+            <button class="btn-success" onclick="copiar(this)">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                COPIAR
+            </button>
+            <button class="btn-secondary" onclick="baixarTxt()">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                BAIXAR .TXT
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    <span id="toastMessage">Copiado com sucesso!</span>
+</div>
+
+<script>
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        if (toast.classList.contains('show')) {
+            toastMessage.innerText = message;
+            return;
+        }
+        toastMessage.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    function separar() {
+        const input = document.getElementById('inputText').value;
+        const outputTextarea = document.getElementById('outputText');
+        const repeatedTextarea = document.getElementById('repeatedText');
+        
+        if (!input.trim()) {
+            showToast("Cole algum texto para separar.");
+            return;
+        }
+
+        let validCards = [];
+        let invalidCount = 0;
+
+        const regexCompleto = /(\d{16})[^\d]*(\d{2})[^\d]*(\d{4})[^\d]*(\d{3,4})/g;
+        let match;
+        let encontrouCompleto = false;
+
+        while ((match = regexCompleto.exec(input)) !== null) {
+            encontrouCompleto = true;
+            const card = `${match[1]}|${match[2]}|${match[3]}|${match[4]}`;
+            validCards.push(card);
+        }
+
+        if (!encontrouCompleto) {
+            const blocos = input.split(/\n\s*\n/);
+            blocos.forEach(bloco => {
+                const allNumbers = bloco.match(/\d+/g) || [];
+                let cardNumber = null, mes = null, ano = null, cvv = null;
+
+                for (let num of allNumbers) {
+                    if (num.length >= 13 && num.length <= 19) {
+                        cardNumber = num;
+                        break;
+                    }
+                }
+
+                const outrosNumeros = allNumbers.filter(n => n !== cardNumber);
+                
+                for (let i = outrosNumeros.length - 1; i >= 0; i--) {
+                    const num = outrosNumeros[i];
+                    if (num.length === 3 || num.length === 4) {
+                        if (num.length === 4 && (num.startsWith('20') || num.startsWith('19'))) {
+                            ano = num;
+                        } else {
+                            cvv = num;
+                            break;
+                        }
+                    }
+                }
+
+                for (let num of outrosNumeros) {
+                    if (num.length <= 2 && !mes) {
+                        mes = num.padStart(2, '0');
+                    } else if ((num.length === 4 || num.length === 2) && !ano) {
+                        ano = num.length === 2 ? '20' + num : num;
+                    }
+                }
+
+                if (!cvv && outrosNumeros.length > 0) {
+                    for (let i = outrosNumeros.length - 1; i >= 0; i--) {
+                        if (outrosNumeros[i].length >= 3 && outrosNumeros[i].length <= 4) {
+                            cvv = outrosNumeros[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (cardNumber && mes && ano && cvv) {
+                    validCards.push(`${cardNumber}|${mes}|${ano}|${cvv}`);
+                } else {
+                    invalidCount++;
+                }
+            });
+        }
+
+        const cardCounts = {};
+        validCards.forEach(card => {
+            cardCounts[card] = (cardCounts[card] || 0) + 1;
+        });
+
+        const uniqueCards = [];
+        const repeatedCards = [];
+        let repeatedCount = 0;
+
+        for (const [card, count] of Object.entries(cardCounts)) {
+            if (count > 1) {
+                repeatedCount += (count - 1);
+                repeatedCards.push(`${card} (apareceu ${count} vezes)`);
+            }
+            uniqueCards.push(card);
+        }
+
+        document.getElementById('countLines').innerText = validCards.length + invalidCount;
+        document.getElementById('countValid').innerText = validCards.length;
+        document.getElementById('countInvalid').innerText = invalidCount;
+        document.getElementById('countRepeated').innerText = repeatedCount;
+
+        if (uniqueCards.length > 0) {
+            outputTextarea.value = uniqueCards.join('\n');
+        } else {
+            outputTextarea.value = "Nenhum cartão válido encontrado.";
+        }
+
+        if (repeatedCards.length > 0) {
+            repeatedTextarea.value = repeatedCards.join('\n');
+        } else {
+            repeatedTextarea.value = "Nenhum cartão repetido.";
+        }
+        
+        showToast("Separação concluída!");
+    }
+
+    function limpar() {
+        document.getElementById('inputText').value = '';
+        document.getElementById('outputText').value = '';
+        document.getElementById('repeatedText').value = '';
+        
+        document.getElementById('countLines').innerText = '0';
+        document.getElementById('countValid').innerText = '0';
+        document.getElementById('countInvalid').innerText = '0';
+        document.getElementById('countRepeated').innerText = '0';
+        
+        showToast("Tudo limpo!");
+    }
+
+    function copiar(btnElement) {
+        const outputTextarea = document.getElementById('outputText');
+        const textToCopy = outputTextarea.value;
+        
+        if (!textToCopy || textToCopy === "Nenhum cartão válido encontrado.") {
+            showToast("Não há nada para copiar.");
+            return;
+        }
+
+        const iconeOriginal = btnElement.innerHTML;
+
+        function feedback() {
+            btnElement.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> COPIADO!';
+            setTimeout(() => {
+                btnElement.innerHTML = iconeOriginal;
+            }, 2000);
+            showToast("Cartões copiados!");
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(feedback).catch(() => {
+                copiarFallback(textToCopy, feedback);
+            });
+        } else {
+            copiarFallback(textToCopy, feedback);
+        }
+    }
+
+    function copiarFallback(text, callback) {
+        try {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.left = '-9999px';
+            tempTextarea.style.top = '0';
+            tempTextarea.setAttribute('readonly', '');
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            tempTextarea.setSelectionRange(0, 99999);
+            const sucesso = document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
+            if (sucesso) {
+                callback();
+            } else {
+                showToast("Não foi possível copiar.");
+            }
+        } catch (err) {
+            showToast("Erro ao copiar. Selecione e copie manualmente.");
+        }
+    }
+
+    function gerarDownload(text, filename) {
+        try {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 2000);
+            showToast("Download iniciado!");
+        } catch (err) {
+            try {
+                const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+                const a = document.createElement('a');
+                a.href = dataUri;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast("Download via fallback iniciado!");
+            } catch (e) {
+                showToast("Erro: navegador bloqueou o download.");
+            }
+        }
+    }
+
+    function baixarTxt() {
+        const outputTextarea = document.getElementById('outputText');
+        const textToDownload = outputTextarea.value;
+
+        if (!textToDownload || textToDownload === "Nenhum cartão válido encontrado.") {
+            showToast("Não há nada para baixar.");
+            return;
+        }
+
+        const dataAtual = new Date().toLocaleString('pt-BR');
+        const conteudo = `--- Cartões Separados em ${dataAtual} ---\n\n${textToDownload}`;
+        gerarDownload(conteudo, 'cartoes_separados.txt');
+    }
+</script>
+
+</body>
+</html>
