@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fh4llen Godz - Separador e Gerador</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        :root {
+            --bg-color: #0a0a0f;
+            --bg-gradient-1: rgba(139, 92, 246, 0.12);
+            --bg-gradient-2: rgba(16, 185, 129, 0.06);
+            --card-bg: #22273a;
+            --card-border: rgba(255, 255, 255, 0.16);
+            --input-bg: #0f1219;
+            --input-border: rgba(255, 255, 255, 0.15);
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --primary-light: #c4b5fd;
+            --success: #10b981;
+            --success-hover: #059669;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #a1a9b8;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-serif: 'Playfair Display', serif;
+            --sidebar-bg: #181c28;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--bg-gradient-1), transparent 30%),
+                radial-gradient(circle at 90% 80%, var(--bg-gradient-2), transparent 30%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 0;
+            padding-top: 70px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 1000;
+        }
+
+        .menu-btn {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 60px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            transition: background 0.2s;
+            z-index: 2;
+        }
+        
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-btn svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+
+        .app-header h1 {
+            position: absolute;
+            left: 60px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 20px;
+        }
+
+        .app-header h1 .purple-name {
+            background: linear-gradient(135deg, var(--primary-light), #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .app-header h1 .separator-text {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-left: 5px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            z-index: 2000;
+            transition: left 0.3s ease;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-header svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary-light);
+        }
+
+        .sidebar-header span {
+            font-family: var(--font-main);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 5px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
+            color: var(--primary-light);
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 1500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .card-header-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+
+        textarea, input[type="number"], input[type="text"], select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            padding: 14px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            letter-spacing: -0.3px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 
+                inset 0 10px 20px rgba(0, 0, 0, 0.9),
+                inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+                0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        
+        input[type="number"], input[type="text"], select {
+            font-family: var(--font-main);
+            cursor: pointer;
+        }
+
+        select option {
+            background: var(--input-bg);
+            color: var(--text-main);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            border-color: rgba(139, 92, 246, 0.8);
+            box-shadow: 
+                inset 0 10px 20px rgba(0, 0, 0, 0.9),
+                inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+                0 0 0 2px rgba(139, 92, 246, 0.5);
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+
+        /* ==== LISTA DE CARTÕES GERADOS ==== */
+        .generated-list-container {
+            width: 100%;
+            height: 330px; 
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 8px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 0 transparent; 
+            
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .generated-list-container::-webkit-scrollbar {
+            display: none; 
+        }
+
+        .generated-card-row {
+            display: flex;
+            align-items: center; 
+            padding: 6px 4px; 
+            border-bottom: none; 
+            background: transparent;
+            font-family: var(--font-mono);
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .generated-card-row span {
+            width: 100%;
+            min-width: 0; 
+            font-size: 13px; 
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+            line-height: 1.4;
+        }
+
+        #inputText {
+            height: 220px;
+        }
+
+        #outputText {
+            height: 150px;
+            margin-bottom: 12px;
+        }
+
+        #repeatedText {
+            height: 100px;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            font-family: var(--font-main);
+            letter-spacing: 0.5px;
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #353a48;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), var(--success-hover));
+            color: white;
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            box-shadow: 
+                inset 0 5px 10px rgba(0,0,0,0.8),
+                inset 0 -1px 0 rgba(255,255,255,0.04);
+        }
+
+        .result-box .label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: center;
+        }
+
+        .result-box .label svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .result-box .label .icon-lines { fill: #60a5fa; }
+        .result-box .label .icon-valid { fill: var(--success); }
+        .result-box .label .icon-invalid { fill: var(--danger); }
+        .result-box .label .icon-repeated { fill: var(--warning); }
+
+        .result-box span:last-child {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .val-green { color: var(--success); }
+        .val-red { color: var(--danger); }
+        .val-blue { color: #60a5fa; }
+        .val-orange { color: var(--warning); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 12px 24px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--success);
+        }
+
+        .toast.error svg {
+            fill: var(--danger);
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+        <span>Menu</span>
+    </div>
+    <nav class="sidebar-menu">
+        <a class="sidebar-item active" onclick="switchScreen('separador', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2L8 6h3v4H6v2h5v4H8l4 4 4-4h-3v-4h5v-2h-5V6h3l-4-4z"/></svg>
+            Separador
+        </a>
+        <a class="sidebar-item" onclick="switchScreen('gerador', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+            Gerador de Cartões
+        </a>
+    </nav>
+</aside>
+
+<header class="app-header">
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    
+    <h1 id="headerTitle">
+        <span class="purple-name">Fh4llen Godz</span> 
+        <span class="separator-text">- Separador de Cartões</span>
+    </h1>
+</header>
+
+<div class="container">
+    
+    <!-- TELA: SEPARADOR -->
+    <div class="screen active" id="screen-separador">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+                    COLE A LISTA
+                </div>
+            </div>
+            <textarea id="inputText" placeholder="Cole aqui os textos com os dados do cartão..."></textarea>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="separar()">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M12 2 L8 6 H10 V9 H14 V6 H16 Z"/>
+                        <rect x="5" y="11" width="14" height="2" rx="1"/>
+                        <path d="M12 22 L8 18 H10 V15 H14 V18 H16 Z"/>
+                    </svg>
+                    SEPARAR
+                </button>
+                <button class="btn-secondary" onclick="limpar()">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    LIMPAR
+                </button>
+            </div>
+        </div>
+
+        <div class="card" id="resultCard">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v5h2v-5h2v-2h-2v-5h-2v5z"/></svg>
+                    RESULTADO
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <span class="label">
+                        <svg class="icon-lines" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4-3h2v13h-2z"/></svg>
+                        Linhas
+                    </span>
+                    <span id="countLines" class="val-blue">0</span>
+                </div>
+                <div class="result-box">
+                    <span class="label">
+                        <svg class="icon-valid" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Válidos
+                    </span>
+                    <span id="countValid" class="val-green">0</span>
+                </div>
+                <div class="result-box">
+                    <span class="label">
+                        <svg class="icon-invalid" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                        Inválidos
+                    </span>
+                    <span id="countInvalid" class="val-red">0</span>
+                </div>
+                <div class="result-box" style="grid-column: span 3;">
+                    <span class="label">
+                        <svg class="icon-repeated" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+                        Cartões Repetidos
+                    </span>
+                    <span id="countRepeated" class="val-orange">0</span>
+                </div>
+            </div>
+
+            <textarea id="outputText" readonly placeholder="Os cartões separados aparecerão aqui após clicar em SEPARAR..."></textarea>
+            
+            <textarea id="repeatedText" readonly placeholder="Os cartões repetidos aparecerão aqui..."></textarea>
+
+            <div class="btn-group" style="flex-wrap: wrap;">
+                <button class="btn-success" onclick="copiar(this)">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    COPIAR
+                </button>
+                <button class="btn-secondary" onclick="baixarTxt()">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    BAIXAR .TXT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA: GERADOR -->
+    <div class="screen" id="screen-gerador">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v5h2v-5h2v-2h-2v-5h-2v5z"/></svg>
+                    CONFIGURAÇÕES
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>BIN / PREFIXO (APENAS NÚMEROS INICIAIS)</label>
+                <!-- EXEMPLO ATUALIZADO AQUI -->
+                <input type="text" id="genMatrix" placeholder="Ex: 55555555">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>QUANTIDADE</label>
+                    <input type="number" id="genAmount" value="10" min="1" max="10000">
+                </div>
+                <div class="form-group">
+                    <label>MÊS</label>
+                    <select id="genMonth">
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12" selected>12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ANO</label>
+                    <select id="genYear">
+                        <option value="2026" selected>2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                        <option value="2031">2031</option>
+                        <option value="2032">2032</option>
+                        <option value="2033">2033</option>
+                        <option value="2034">2034</option>
+                        <option value="2035">2035</option>
+                        <option value="2036">2036</option>
+                        <option value="2037">2037</option>
+                        <option value="2038">2038</option>
+                        <option value="2039">2039</option>
+                        <option value="2040">2040</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" onclick="gerarCartoes()">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM11 7h2v4h4v2h-4v4h-2v-4H7v-2h4V7z"/></svg>
+                    GERAR CARTÕES
+                </button>
+                <button class="btn-secondary" onclick="limparGerador()">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    LIMPAR
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v5h2v-5h2v-2h-2v-5h-2v5z"/></svg>
+                    CARTÕES GERADOS
+                </div>
+            </div>
+            
+            <div id="generatedList" class="generated-list-container">
+                <div style="color: var(--text-muted); text-align: center; margin-top: 130px;">Os cartões gerados aparecerão aqui...</div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-success" onclick="copiarGerados(this)">
+                    <svg class="btn-icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    COPIAR GERADOS
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="toast" id="toast">
+    <svg id="toastIcon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    <span id="toastMessage">Copiado com sucesso!</span>
+</div>
+
+<script>
+    let currentGeneratedCards = [];
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function switchScreen(screenName, element) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + screenName).classList.add('active');
+        
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+        
+        const headerTitle = document.getElementById('headerTitle');
+        if (screenName === 'separador') {
+            headerTitle.innerHTML = '<span class="purple-name">Fh4llen Godz</span> <span class="separator-text">- Separador de Cartões</span>';
+        } else if (screenName === 'gerador') {
+            headerTitle.innerHTML = '<span class="purple-name">Fh4llen Godz</span> <span class="separator-text">- Gerador de Cartões</span>';
+        }
+        
+        toggleSidebar();
+    }
+
+    const ICON_CHECK = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>';
+    const ICON_X = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
+
+    let toastTimeout = null;
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+        
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+            toastTimeout = null;
+        }
+        
+        if (isError) {
+            toastIcon.innerHTML = ICON_X;
+            toast.classList.add('error');
+        } else {
+            toastIcon.innerHTML = ICON_CHECK;
+            toast.classList.remove('error');
+        }
+        
+        toastMessage.innerText = message;
+        
+        if (toast.classList.contains('show')) {
+            toast.style.transition = 'none';
+            toast.classList.remove('show');
+            void toast.offsetWidth;
+            toast.style.transition = '';
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+        } else {
+            toast.classList.add('show');
+        }
+        
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+            toastTimeout = null;
+        }, 2000);
+    }
+
+    // ==================== SEPARADOR ====================
+    function separar() {
+        const input = document.getElementById('inputText').value;
+        const outputTextarea = document.getElementById('outputText');
+        const repeatedTextarea = document.getElementById('repeatedText');
+        
+        if (!input.trim()) {
+            showToast("Cole algum texto para separar.", true);
+            return;
+        }
+
+        let validCards = [];
+        let invalidCount = 0;
+
+        const regexCompleto = /(\d{16})[^\d]*(\d{2})[^\d]*(\d{4})[^\d]*(\d{3,4})/g;
+        let match;
+        let encontrouCompleto = false;
+
+        while ((match = regexCompleto.exec(input)) !== null) {
+            encontrouCompleto = true;
+            const card = `${match[1]}|${match[2]}|${match[3]}|${match[4]}`;
+            validCards.push(card);
+        }
+
+        if (!encontrouCompleto) {
+            const blocos = input.split(/\n\s*\n/);
+            blocos.forEach(bloco => {
+                const allNumbers = bloco.match(/\d+/g) || [];
+                let cardNumber = null, mes = null, ano = null, cvv = null;
+
+                for (let num of allNumbers) {
+                    if (num.length >= 13 && num.length <= 19) {
+                        cardNumber = num;
+                        break;
+                    }
+                }
+
+                const outrosNumeros = allNumbers.filter(n => n !== cardNumber);
+                
+                for (let i = outrosNumeros.length - 1; i >= 0; i--) {
+                    const num = outrosNumeros[i];
+                    if (num.length === 3 || num.length === 4) {
+                        if (num.length === 4 && (num.startsWith('20') || num.startsWith('19'))) {
+                            ano = num;
+                        } else {
+                            cvv = num;
+                            break;
+                        }
+                    }
+                }
+
+                for (let num of outrosNumeros) {
+                    if (num.length <= 2 && !mes) {
+                        mes = num.padStart(2, '0');
+                    } else if ((num.length === 4 || num.length === 2) && !ano) {
+                        ano = num.length === 2 ? '20' + num : num;
+                    }
+                }
+
+                if (!cvv && outrosNumeros.length > 0) {
+                    for (let i = outrosNumeros.length - 1; i >= 0; i--) {
+                        if (outrosNumeros[i].length >= 3 && outrosNumeros[i].length <= 4) {
+                            cvv = outrosNumeros[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (cardNumber && mes && ano && cvv) {
+                    validCards.push(`${cardNumber}|${mes}|${ano}|${cvv}`);
+                } else {
+                    invalidCount++;
+                }
+            });
+        }
+
+        const cardCounts = {};
+        validCards.forEach(card => {
+            cardCounts[card] = (cardCounts[card] || 0) + 1;
+        });
+
+        const uniqueCards = [];
+        const repeatedCards = [];
+        let repeatedCount = 0;
+
+        for (const [card, count] of Object.entries(cardCounts)) {
+            if (count > 1) {
+                repeatedCount += (count - 1);
+                repeatedCards.push(`${card} (apareceu ${count} vezes)`);
+            }
+            uniqueCards.push(card);
+        }
+
+        document.getElementById('countLines').innerText = validCards.length + invalidCount;
+        document.getElementById('countValid').innerText = validCards.length;
+        document.getElementById('countInvalid').innerText = invalidCount;
+        document.getElementById('countRepeated').innerText = repeatedCount;
+
+        if (uniqueCards.length > 0) {
+            outputTextarea.value = uniqueCards.join('\n');
+        } else {
+            outputTextarea.value = "Nenhum cartão válido encontrado.";
+        }
+
+        if (repeatedCards.length > 0) {
+            repeatedTextarea.value = repeatedCards.join('\n');
+        } else {
+            repeatedTextarea.value = "Nenhum cartão repetido.";
+        }
+        
+        document.getElementById('inputText').value = '';
+        
+        showToast("Separação concluída!");
+    }
+
+    function limpar() {
+        const input = document.getElementById('inputText').value;
+        const output = document.getElementById('outputText').value;
+        const repeated = document.getElementById('repeatedText').value;
+        
+        const temAlgoParaLimpar = 
+            input.trim() !== '' ||
+            (output && output !== "Nenhum cartão válido encontrado.") ||
+            (repeated && repeated !== "Nenhum cartão repetido.");
+        
+        if (!temAlgoParaLimpar) {
+            showToast("Não há nada para limpar.", true);
+            return;
+        }
+        
+        document.getElementById('inputText').value = '';
+        document.getElementById('outputText').value = '';
+        document.getElementById('repeatedText').value = '';
+        
+        document.getElementById('countLines').innerText = '0';
+        document.getElementById('countValid').innerText = '0';
+        document.getElementById('countInvalid').innerText = '0';
+        document.getElementById('countRepeated').innerText = '0';
+        
+        showToast("Tudo limpo!");
+    }
+
+    function copiar(btnElement) {
+        const outputTextarea = document.getElementById('outputText');
+        const textToCopy = outputTextarea.value;
+        
+        if (!textToCopy || textToCopy === "Nenhum cartão válido encontrado.") {
+            showToast("Não há nada para copiar.", true);
+            return;
+        }
+
+        const iconeOriginal = btnElement.innerHTML;
+
+        function feedback() {
+            btnElement.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> COPIADO!';
+            setTimeout(() => {
+                btnElement.innerHTML = iconeOriginal;
+            }, 2000);
+            showToast("Cartões copiados!");
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(feedback).catch(() => {
+                copiarFallback(textToCopy, feedback);
+            });
+        } else {
+            copiarFallback(textToCopy, feedback);
+        }
+    }
+
+    function copiarFallback(text, callback) {
+        try {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.left = '-9999px';
+            tempTextarea.style.top = '0';
+            tempTextarea.setAttribute('readonly', '');
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            tempTextarea.setSelectionRange(0, 99999);
+            const sucesso = document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
+            if (sucesso) {
+                callback();
+            } else {
+                showToast("Não foi possível copiar.", true);
+            }
+        } catch (err) {
+            showToast("Erro ao copiar. Selecione e copie manualmente.", true);
+        }
+    }
+
+    function gerarDownload(text, filename) {
+        try {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 2000);
+            showToast("Download iniciado!");
+        } catch (err) {
+            try {
+                const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+                const a = document.createElement('a');
+                a.href = dataUri;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast("Download via fallback iniciado!");
+            } catch (e) {
+                showToast("Erro: navegador bloqueou o download.", true);
+            }
+        }
+    }
+
+    function baixarTxt() {
+        const outputTextarea = document.getElementById('outputText');
+        const textToDownload = outputTextarea.value;
+
+        if (!textToDownload || textToDownload === "Nenhum cartão válido encontrado.") {
+            showToast("Não há nada para baixar.", true);
+            return;
+        }
+
+        const dataAtual = new Date().toLocaleString('pt-BR');
+        const conteudo = `--- Cartões Separados em ${dataAtual} ---\n\n${textToDownload}`;
+        gerarDownload(conteudo, 'cartoes_separados.txt');
+    }
+
+    // ==================== GERADOR ====================
+    
+    function calcularLuhn(numero) {
+        let soma = 0;
+        let deveDobrar = false;
+
+        for (let i = numero.length - 1; i >= 0; i--) {
+            let digito = parseInt(numero.charAt(i), 10);
+            if (deveDobrar) {
+                digito *= 2;
+                if (digito > 9) digito -= 9;
+            }
+            soma += digito;
+            deveDobrar = !deveDobrar;
+        }
+        let digitoVerificador = (10 - (soma % 10)) % 10;
+        return digitoVerificador;
+    }
+
+    function validarLuhn(cartaoCompleto) {
+        let soma = 0;
+        let deveDobrar = false;
+        
+        for (let i = cartaoCompleto.length - 1; i >= 0; i--) {
+            let digito = parseInt(cartaoCompleto.charAt(i), 10);
+            if (deveDobrar) {
+                digito *= 2;
+                if (digito > 9) digito -= 9;
+            }
+            soma += digito;
+            deveDobrar = !deveDobrar;
+        }
+        return (soma % 10) === 0;
+    }
+
+    function gerarCartoes() {
+        const matrixInput = document.getElementById('genMatrix').value.trim();
+        const amount = parseInt(document.getElementById('genAmount').value);
+        const month = document.getElementById('genMonth').value;
+        const year = document.getElementById('genYear').value;
+        const container = document.getElementById('generatedList');
+        
+        if (isNaN(amount) || amount < 1 || amount > 10000) {
+            showToast("A quantidade deve ser entre 1 e 10.000.", true);
+            return;
+        }
+
+        if (!matrixInput) {
+            showToast("Por favor, insira uma BIN/Prefixo.", true);
+            return;
+        }
+
+        setTimeout(() => {
+            currentGeneratedCards = []; 
+            let generatedSet = new Set();
+            let tentativasMaximas = 50000; 
+            let tentativas = 0;
+
+            while (currentGeneratedCards.length < amount && tentativas < tentativasMaximas) {
+                let baseNumber = matrixInput.replace(/\D/g, '');
+                let isAmex = baseNumber.startsWith('34') || baseNumber.startsWith('37');
+                let targetLength = isAmex ? 15 : 16;
+                
+                let numberBody = baseNumber;
+
+                if (numberBody.length < targetLength - 1) {
+                    while (numberBody.length < targetLength - 1) {
+                        numberBody += Math.floor(Math.random() * 10);
+                    }
+                } else if (numberBody.length >= targetLength) {
+                    numberBody = numberBody.substring(0, targetLength - 1);
+                }
+
+                const digitoVerificador = calcularLuhn(numberBody);
+                const fullCardNumber = numberBody + digitoVerificador;
+
+                if (validarLuhn(fullCardNumber)) {
+                    const cvvLength = isAmex ? 4 : 3;
+                    let cvv = "";
+                    for (let j = 0; j < cvvLength; j++) {
+                        cvv += Math.floor(Math.random() * 10);
+                    }
+
+                    const fullCard = `${fullCardNumber}|${month}|${year}|${cvv}`;
+
+                    if (!generatedSet.has(fullCard)) {
+                        generatedSet.add(fullCard);
+                        currentGeneratedCards.push(fullCard);
+                    }
+                }
+                tentativas++;
+            }
+
+            if (currentGeneratedCards.length === 0) {
+                container.innerHTML = '<div style="color: var(--danger); text-align: center; margin-top: 130px;">Erro ao gerar. Verifique a BIN.</div>';
+                showToast("Erro ao gerar cartões.", true);
+                return;
+            }
+
+            let htmlString = '';
+            currentGeneratedCards.forEach(card => {
+                htmlString += `
+                    <div class="generated-card-row">
+                        <span>${card}</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = htmlString;
+
+            if (currentGeneratedCards.length < amount) {
+                showToast(`Gerados ${currentGeneratedCards.length} únicos (limite de segurança atingido).`, true);
+            } else {
+                showToast(`${currentGeneratedCards.length} cartões únicos gerados!`);
+            }
+        }, 50);
+    }
+
+    function limparGerador() {
+        const container = document.getElementById('generatedList');
+        
+        if (currentGeneratedCards.length === 0 && container.innerHTML.includes('aparecerão aqui')) {
+            showToast("Não há nada para limpar.", true);
+            return;
+        }
+
+        currentGeneratedCards = [];
+        container.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 130px;">Os cartões gerados aparecerão aqui...</div>';
+        showToast("Lista de cartões gerados limpa!");
+    }
+
+    function copiarGerados(btnElement) {
+        if (!currentGeneratedCards || currentGeneratedCards.length === 0) {
+            showToast("Não há nada para copiar.", true);
+            return;
+        }
+
+        const textToCopy = currentGeneratedCards.join('\n');
+        const iconeOriginal = btnElement.innerHTML;
+
+        function feedback() {
+            btnElement.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> COPIADO!';
+            setTimeout(() => {
+                btnElement.innerHTML = iconeOriginal;
+            }, 2000);
+            showToast("Todos os cartões copiados!");
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(feedback).catch(() => {
+                copiarFallback(textToCopy, feedback);
+            });
+        } else {
+            copiarFallback(textToCopy, feedback);
+        }
+    }
+</script>
+
+</body>
+</html>
